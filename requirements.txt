@@ -1,0 +1,7 @@
+PyQt5
+pyqtgraph>=0.13
+pyserial>=3.5
+PyYAML
+tqdm
+PyOpenGL
+numpy

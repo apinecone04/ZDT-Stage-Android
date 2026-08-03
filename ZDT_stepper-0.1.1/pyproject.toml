@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zdt_stepper"
+version = "0.1.1"
+description = "ZDT stepper motor control library"
+authors = [{ name = "Yehe Liu", email = "yehe@opsiclear.com" }]
+requires-python = ">=3.10"
+dependencies = ["pyserial", "pyyaml", "tqdm"]
+license = { file = "LICENSE" }
+readme = "README.md"
+keywords = ["stepper", "motor", "control"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+]
+
+[project.optional-dependencies]
+dev = ["ruff", "pre-commit", "twine"]
+build = ["setuptools", "wheel", "build"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+packages = { find = { where = ["src"] } }
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = ["*.ipynb"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "N",
+    "D",
+    "UP",
+    "S",
+    "BLE",
+    "FBT",
+    "B",
+    "C4",
+    "PT",
+    "Q",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/*" = ["S101"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["zdt_stepper"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

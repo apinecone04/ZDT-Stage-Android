@@ -1,0 +1,14 @@
+name: zdt
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pyserial
+  - pyyaml
+  - tqdm
+  # Development tools
+  - ruff
+  - pre-commit
+  - twine
+  - ipykernel
