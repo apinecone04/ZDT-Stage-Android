@@ -97,6 +97,28 @@ class Preset:
 
 
 @dataclass
+class ScriptPoint:
+    """脚本路径点 (X/Y/Z mm + 到点后停留秒数)。"""
+
+    x: float = 0.0
+    y: float = 0.0
+    z: float = 0.0
+    dwell: float = 0.0  # 到点后停留时间 (秒)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> "ScriptPoint":
+        return cls(
+            x=float(d.get("x", 0.0)),
+            y=float(d.get("y", 0.0)),
+            z=float(d.get("z", 0.0)),
+            dwell=float(d.get("dwell", 0.0)),
+        )
+
+
+@dataclass
 class AppConfig:
     """全局配置。"""
 
@@ -106,6 +128,7 @@ class AppConfig:
     poll_interval: float = 0.1
     axes: dict[str, AxisConfig] = field(default_factory=dict)
     presets: list[Preset] = field(default_factory=list)
+    script: list[ScriptPoint] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         if not self.axes:
@@ -119,6 +142,7 @@ class AppConfig:
             "poll_interval": self.poll_interval,
             "axes": {a: cfg.to_dict() for a, cfg in self.axes.items()},
             "presets": [p.to_dict() for p in self.presets],
+            "script": [p.to_dict() for p in self.script],
         }
 
     @classmethod
@@ -135,6 +159,7 @@ class AppConfig:
             a: AxisConfig.from_dict(d.get("axes", {}).get(a, {}), a) for a in AXES
         }
         cfg.presets = [Preset.from_dict(p) for p in d.get("presets", [])]
+        cfg.script = [ScriptPoint.from_dict(p) for p in d.get("script", [])]
         return cfg
 
     def save(self, path: Path = CONFIG_PATH) -> None:

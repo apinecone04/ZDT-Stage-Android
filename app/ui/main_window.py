@@ -24,6 +24,7 @@ from app.ui.goto_panel import GotoPanel
 from app.ui.home_panel import HomePanel
 from app.ui.jog_panel import JogPanel
 from app.ui.status_panel import StatusPanel
+from app.ui.script_panel import ScriptPanel
 from app.ui.teach_panel import TeachPanel
 from app.ui.view3d import make_3d_view
 
@@ -70,6 +71,7 @@ class MainWindow(QMainWindow):
         self.goto = GotoPanel(config, self.backend)
         self.home = HomePanel(config, self.backend)
         self.teach = TeachPanel(config, self.backend)
+        self.script = ScriptPanel(config, self.backend)
         self.calib = CalibratePanel(config, self.backend)
         self.status = StatusPanel(config)
 
@@ -79,6 +81,7 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.goto, "定位")
         self.tabs.addTab(self.home, "回零")
         self.tabs.addTab(self.teach, "示教")
+        self.tabs.addTab(self.script, "脚本")
         self.tabs.addTab(self.calib, "标定")
         self.tabs.addTab(self.status, "状态")
 
@@ -135,7 +138,7 @@ class MainWindow(QMainWindow):
     # ---- 信号处理 ----
     def _on_status(self, snaps: dict) -> None:
         # 分发给需要实时快照的面板
-        for w in (self.goto, self.home, self.teach, self.calib, self.status):
+        for w in (self.goto, self.home, self.teach, self.script, self.calib, self.status):
             try:
                 w.update_status(snaps)
             except AttributeError:
