@@ -43,19 +43,23 @@ class AxisSnapshot:
         """由原始角度位置换算为相对原点的 mm。未标定返回 0。"""
         if not cal.valid or cal.angle_per_mm == 0:
             return 0.0
-        return (self.angle_position - cal.origin_angle) / cal.angle_per_mm
+        raw = (self.angle_position - cal.origin_angle) / cal.angle_per_mm
+        return -raw if cal.invert else raw
 
     def target_mm(self, cal: Calibration) -> float:
         if not cal.valid or cal.angle_per_mm == 0:
             return 0.0
-        return (self.target_position - cal.origin_angle) / cal.angle_per_mm
+        raw = (self.target_position - cal.origin_angle) / cal.angle_per_mm
+        return -raw if cal.invert else raw
 
 
 def delta_mm_to_pulses(delta_mm: float, cal: Calibration) -> int:
     """相对位移 mm -> move 指令的微步脉冲数 (带符号)。
 
+    delta_mm 为显示坐标系的位移；invert 轴需先取反再换算。
     返回带符号整数：正=CW，负=CCW。未标定返回 0。
     """
     if not cal.valid or cal.pulses_per_mm == 0:
         return 0
-    return int(round(delta_mm * cal.pulses_per_mm))
+    d = -delta_mm if cal.invert else delta_mm
+    return int(round(d * cal.pulses_per_mm))

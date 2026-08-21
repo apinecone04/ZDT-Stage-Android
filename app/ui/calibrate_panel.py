@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QTimer
 from PyQt5.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QDoubleSpinBox,
     QFormLayout,
@@ -82,12 +83,20 @@ class CalibratePanel(QWidget):
         self.a1_lbl = QLabel("—")
         self.result_lbl = QLabel("未标定")
 
+        self.invert_chk = QCheckBox("方向反转（电机 CW 实为 -mm 方向）")
+        self.invert_chk.setToolTip(
+            "若该轴 goto/点动方向与预期相反，勾此项。\n"
+            "勾选后：显示坐标、goto、点动“+”统一取反，使“+”始终=+mm。"
+        )
+        self.invert_chk.toggled.connect(self._on_invert_toggled)
+
         form = QFormLayout()
         form.addRow("标定轴", self.axis_box)
         form.addRow("移动脉冲 N", self.pulse_sp)
         form.addRow("起始角度 a0", self.a0_lbl)
         form.addRow("终态角度 a1", self.a1_lbl)
         form.addRow("实测位移 d (mm)", self.measured_sp)
+        form.addRow("", self.invert_chk)
 
         bh = QHBoxLayout()
         bh.addWidget(self.read_btn)
@@ -120,17 +129,31 @@ class CalibratePanel(QWidget):
         self._watch.start()
 
         self._refresh_state_label()
+        # 初始同步方向反转勾选
+        self.invert_chk.blockSignals(True)
+        self.invert_chk.setChecked(self.config.axes[self.cur_axis].calibration.invert)
+        self.invert_chk.blockSignals(False)
 
     def _on_axis_changed(self) -> None:
         self.cur_axis = self.axis_box.currentData()
         self._refresh_state_label()
+        # 同步方向反转勾选状态（blockSignals 避免触发回写）
+        self.invert_chk.blockSignals(True)
+        self.invert_chk.setChecked(self.config.axes[self.cur_axis].calibration.invert)
+        self.invert_chk.blockSignals(False)
+
+    def _on_invert_toggled(self, checked: bool) -> None:
+        self.config.axes[self.cur_axis].calibration.invert = checked
+        self.backend.set_invert(self.cur_axis, checked)
+        self._log(f"{self.cur_axis.upper()} 方向反转={'开' if checked else '关'}")
 
     def _refresh_state_label(self) -> None:
         cal = self.config.axes[self.cur_axis].calibration
         if cal.valid:
+            inv = " ·反向" if cal.invert else ""
             self.result_lbl.setText(
                 f"<font color='#3ad06c'>{self.cur_axis.upper()} 已标定</font>："
-                f"pulses/mm={cal.pulses_per_mm:.3f}，angle/mm={cal.angle_per_mm:.3f}"
+                f"pulses/mm={cal.pulses_per_mm:.3f}，angle/mm={cal.angle_per_mm:.3f}{inv}"
             )
         else:
             self.result_lbl.setText(f"<font color='#d06c3a'>{self.cur_axis.upper()} 未标定</font>")

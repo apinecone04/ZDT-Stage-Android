@@ -322,6 +322,9 @@ class _Worker(QObject):
         c = self._ctl(axis)
         if not c:
             return
+        # 方向反转：invert 轴的 "+" 按键实际发 CCW，使“+”始终=+mm
+        if self.cal[axis].invert:
+            cw = not cw
         acc = self.motion[axis]["jog_accel"]
         ok = c.jog(cw, speed, acc)
         self.command_result.emit(axis, ok, f"jog {speed}rpm {'CW' if cw else 'CCW'}")
@@ -422,6 +425,12 @@ class _Worker(QObject):
         self._persist_calibration(axis)
         self.command_result.emit(axis, True, "标定已应用")
 
+    def _set_invert(self, axis: str, invert: bool) -> None:
+        self.cal[axis].invert = invert
+        self.config.axes[axis].calibration.invert = invert
+        self.config.save()
+        self.command_result.emit(axis, True, f"方向反转={'开' if invert else '关'}")
+
     def _update_motion(self, axis: str, motion: dict[str, int]) -> None:
         self.motion[axis].update(motion)
         self.config.axes[axis].jog_speed = motion.get("jog_speed", self.motion[axis]["jog_speed"])
@@ -515,6 +524,9 @@ class Backend(QObject):
 
     def apply_calibration(self, axis: str, cal: Calibration) -> None:
         self._q(lambda: self._worker._apply_calibration(axis, cal))
+
+    def set_invert(self, axis: str, invert: bool) -> None:
+        self._q(lambda: self._worker._set_invert(axis, invert))
 
     def update_motion(self, axis: str, motion: dict[str, int]) -> None:
         self._q(lambda: self._worker._update_motion(axis, motion))

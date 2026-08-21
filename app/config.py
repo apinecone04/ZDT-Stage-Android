@@ -32,6 +32,7 @@ class Calibration:
     angle_per_mm: float = 0.0
     origin_angle: int = 0  # 设原点时记录的原始角度位置
     valid: bool = False
+    invert: bool = False  # 方向反转：电机 CW 实际为 -mm 方向时置 True
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -43,6 +44,7 @@ class Calibration:
             angle_per_mm=float(d.get("angle_per_mm", 0.0)),
             origin_angle=int(d.get("origin_angle", 0)),
             valid=bool(d.get("valid", False)),
+            invert=bool(d.get("invert", False)),
         )
 
 
