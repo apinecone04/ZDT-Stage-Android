@@ -62,9 +62,15 @@ python main.py
 - `Ctrl+L` 清轨迹
 - `Ctrl+Q` 退出
 
+## 移动端 / 工控平板支持 (Android 11)
+
+本项目现已提供原生 **Android 11 (API Level 30)** 移动端上位机程序，位于 `android_app/` 目录。
+采用 **Kotlin + Jetpack Compose + usb-serial-for-android** 打造，100% 完整复现了 Windows 版的 8 大控制面板、OpenGL ES 3D 空间监视器与所有安全联锁机制，支持 USB OTG 即插即用与离线 Mock 仿真测试。详细说明请参阅 [android_app/README.md](android_app/README.md)。
+
 ## 目录
 
 ```
+android_app/         # Android 11 原生上位机 (Kotlin + Jetpack Compose)
 app/
   __init__.py        # 库路径引导
   config.py          # 配置数据模型 + JSON 持久化

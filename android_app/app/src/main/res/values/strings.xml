@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">ZDT 三维移动滑台</string>
+    <string name="title_connection">连接</string>
+    <string name="title_jog">点动</string>
+    <string name="title_goto">定位</string>
+    <string name="title_home">回零</string>
+    <string name="title_teach">示教</string>
+    <string name="title_script">脚本</string>
+    <string name="title_calibrate">标定</string>
+    <string name="title_status">状态</string>
+</resources>

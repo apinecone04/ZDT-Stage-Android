@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="zdt_bg">#1c2028</color>
+    <color name="zdt_card">#262b34</color>
+    <color name="zdt_border">#3a4250</color>
+    <color name="zdt_primary">#5aa0ff</color>
+    <color name="zdt_estop">#b02020</color>
+    <color name="zdt_goto">#2f6d2a</color>
+    <color name="zdt_accent">#ffe066</color>
+</resources>
