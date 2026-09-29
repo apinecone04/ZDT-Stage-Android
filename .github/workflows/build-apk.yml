@@ -2,7 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master, main, feat/* ]
   pull_request:
     branches: [ master, main ]
   workflow_dispatch: # 支持在 GitHub 仓库 Actions 页面手动点击一键编译
@@ -22,9 +22,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Build Debug APK with Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
@@ -34,7 +31,7 @@ jobs:
 
       - name: Verify APK Generated
         run: |
-          ls -la android_app/app/build/outputs/apk/debug/app-debug.apk
+          ls -lh android_app/app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
